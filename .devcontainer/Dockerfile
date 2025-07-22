@@ -1,5 +1,5 @@
 # CPU-only version for GitHub Codespaces (.devcontainer/Dockerfile)
-FROM ubuntu:20.04
+FROM ubuntu:22.04
 
 # Set environment variables
 ENV DEBIAN_FRONTEND=noninteractive
@@ -7,8 +7,8 @@ ENV PYTHONUNBUFFERED=1
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
-    python3.8 \
-    python3.8-dev \
+    python3 \
+    python3-dev \
     python3-pip \
     cmake \
     build-essential \
@@ -19,8 +19,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Create symbolic links for python
-RUN ln -sf /usr/bin/python3.8 /usr/bin/python3 && \
-    ln -sf /usr/bin/python3.8 /usr/bin/python
+RUN ln -sf /usr/bin/python3 /usr/bin/python
 
 # Install PyTorch (CPU version) from dedicated index
 RUN pip3 install --no-cache-dir \
