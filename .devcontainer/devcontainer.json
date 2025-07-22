@@ -1,0 +1,22 @@
+{
+  "name": "Adjoint Nonlinear Ray Tracing (CPU)",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".."
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.pylint", 
+        "ms-vscode.cpptools",
+        "ms-vscode.cmake-tools"
+      ]
+    }
+  },
+  "workspaceFolder": "/workspace",
+  "postCreateCommand": "source setpath.sh && echo 'Environment ready! Run: python core/luneburg_opt.py to test'",
+  "containerEnv": {
+    "PYTHONPATH": "/workspace/build:${PYTHONPATH}"
+  }
+}
