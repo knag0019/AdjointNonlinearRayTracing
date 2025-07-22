@@ -1,4 +1,4 @@
-# CPU-only version for GitHub Codespaces
+# CPU-only version for GitHub Codespaces (.devcontainer/Dockerfile)
 FROM ubuntu:20.04
 
 # Set environment variables
@@ -22,10 +22,13 @@ RUN apt-get update && apt-get install -y \
 RUN ln -sf /usr/bin/python3.8 /usr/bin/python3 && \
     ln -sf /usr/bin/python3.8 /usr/bin/python
 
-# Install Python dependencies (CPU versions)
+# Install PyTorch (CPU version) from dedicated index
+RUN pip3 install --no-cache-dir \
+    torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
+
+# Install other Python dependencies from standard PyPI
 RUN pip3 install --no-cache-dir \
     numpy \
-    torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu \
     matplotlib \
     tqdm \
     Pillow
