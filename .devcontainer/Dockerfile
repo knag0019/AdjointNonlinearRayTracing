@@ -26,7 +26,7 @@ RUN pip install --no-cache-dir numpy matplotlib tqdm pillow \
 # --- CUDA env (CMakeに見えるようにしておく) ---
 ENV CUDA_HOME=/usr/local/cuda
 ENV CUDACXX=/usr/local/cuda/bin/nvcc
-ENV PATH=/usr/local/cuda/bin:${PATH}
+ENV PATH=/usr/local/cuda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 
 # --- devcontainer user ---
 RUN groupadd -g ${GID} ${USER} && useradd -m -s /bin/bash -u ${UID} -g ${GID} ${USER} && \
