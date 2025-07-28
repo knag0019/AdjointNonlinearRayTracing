@@ -24,5 +24,4 @@ export PYTHONPATH="$ENOKI_DIR:$DRRT_DIR/build:$DRRT_DIR/build/lib:$PYTHONPATH"
 export LD_LIBRARY_PATH="$ENOKI_DIR:$DRRT_DIR/build:$DRRT_DIR/build/lib:$LD_LIBRARY_PATH"
 EOF
 
-# 自動読み込み
 grep -q 'setpath.sh' ~/.bashrc || echo "source $(pwd)/setpath.sh" >> ~/.bashrc
