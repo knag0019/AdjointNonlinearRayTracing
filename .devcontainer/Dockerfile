@@ -1,64 +1,41 @@
-# CPU-only version for GitHub Codespaces (.devcontainer/Dockerfile)
-FROM ubuntu:22.04
+# syntax=docker/dockerfile:1
 
-# Set environment variables
-ENV DEBIAN_FRONTEND=noninteractive
-ENV PYTHONUNBUFFERED=1
+FROM nvidia/cuda:11.8.0-devel-ubuntu20.04
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    python3 \
-    python3-dev \
-    python3-pip \
-    cmake \
-    build-essential \
-    git \
-    wget \
-    curl \
-    vim \
-    && rm -rf /var/lib/apt/lists/*
+ARG DEBIAN_FRONTEND=noninteractive
+ARG USER=vscode
+ARG UID=1000
+ARG GID=1000
 
-# Create symbolic links for python
-RUN ln -sf /usr/bin/python3 /usr/bin/python
+# ---- System deps ----
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential cmake ninja-build git sudo \
+    python3.8 python3.8-dev python3-pip python3.8-distutils \
+    libpython3.8-dev ca-certificates wget curl \
+ && rm -rf /var/lib/apt/lists/*
 
-# Install PyTorch (CPU version) from dedicated index
-RUN pip3 install --no-cache-dir \
-    torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
+# ---- Make python3.8 the default 'python' ----
+RUN update-alternatives --install /usr/bin/python python /usr/bin/python3.8 1 && \
+    update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.8 1 && \
+    python -m pip install --upgrade pip
 
-# Install other Python dependencies from standard PyPI
-RUN pip3 install --no-cache-dir \
-    numpy \
-    matplotlib \
-    tqdm \
-    Pillow
+# ---- Non-root user for devcontainers ----
+RUN groupadd -g ${GID} ${USER} && useradd -m -s /bin/bash -u ${UID} -g ${GID} ${USER} && \
+    echo "${USER} ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/${USER}
 
-# Set working directory
-WORKDIR /workspace
+USER ${USER}
+WORKDIR /workspaces
 
-# Copy project files
-COPY . .
+# ---- Python packages (PyTorch CUDA build + others) ----
+# torch==1.13.1 は Python 3.8 対応、cu118 WHL を使用
+RUN pip install --no-cache-dir numpy matplotlib tqdm pillow && \
+    pip install --no-cache-dir --extra-index-url https://download.pytorch.org/whl/cu118 \
+        torch==1.13.1+cu118 torchvision==0.14.1+cu118
 
-# Initialize and update submodules
-RUN git submodule update --init --recursive
+ENV CUDA_HOME=/usr/local/cuda \
+    PYTHONUNBUFFERED=1
 
-# Create build directory and configure cmake (without CUDA)
-RUN mkdir -p build && cd build && \
-    cmake .. \
-    -DENOKI_CUDA=0 \
-    -DENOKI_AUTODIFF=1 \
-    -DENOKI_PYTHON=1 && \
-    make && \
-    cd ..
+SHELL ["/bin/bash", "-lc"]
 
-# Create setpath.sh if it doesn't exist
-RUN if [ ! -f setpath.sh ]; then \
-        echo '#!/bin/bash' > setpath.sh && \
-        echo 'export PYTHONPATH="${PYTHONPATH}:/workspace/build"' >> setpath.sh && \
-        chmod +x setpath.sh; \
-    fi
-
-# Source the path setup
-RUN echo "source /workspace/setpath.sh" >> ~/.bashrc
-
-# Set the default command
-CMD ["bash"]
+# 便利エイリアス等（任意）
+RUN echo 'export PATH=$PATH:/usr/local/cuda/bin' >> ~/.bashrc
