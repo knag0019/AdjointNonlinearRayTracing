@@ -4,12 +4,10 @@
     "dockerfile": "Dockerfile",
     "context": ".."
   },
-  // GPU を必ず使う
   "runArgs": ["--gpus=all", "--shm-size=1g"],
   "remoteUser": "vscode",
 
-  // ワークスペース初回セットアップ（サブモジュール取得→ビルド→setpath.sh を永続化）
-  "postCreateCommand": "git submodule update --init --recursive && mkdir -p build && cd build && cmake .. -DENOKI_CUDA=1 -DENOKI_AUTODIFF=1 -DENOKI_PYTHON=1 && cmake --build . -j $(nproc) && cd .. && echo 'source $(pwd)/setpath.sh' >> ~/.bashrc",
+  "postCreateCommand": "git submodule update --init --recursive && mkdir -p build && cd build && cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DENOKI_CUDA=1 -DENOKI_AUTODIFF=1 -DENOKI_PYTHON=1 -DPYTHON_EXECUTABLE:FILEPATH=$(which python) && cmake --build . -j $(nproc) && cd .. && echo 'source $(pwd)/setpath.sh' >> ~/.bashrc",
 
   "settings": {
     "terminal.integrated.defaultProfile.linux": "bash"
