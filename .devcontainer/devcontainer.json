@@ -14,7 +14,7 @@
   "containerEnv": {
     "CUDACXX": "/usr/local/cuda/bin/nvcc"
   },
-  "postCreateCommand": "bash .devcontainer/postCreate.sh",
+  "postCreateCommand": "/bin/bash -lc '.devcontainer/postCreate.sh'",
   "settings": {
     "terminal.integrated.defaultProfile.linux": "bash"
   },
