@@ -36,5 +36,5 @@ USER ${USER}
 WORKDIR /workspaces
 SHELL ["/bin/bash", "-lc"]
 
-# コンテナが落ちないように
+# コンテナが即終了しないように
 CMD ["bash", "-lc", "sleep infinity"]
