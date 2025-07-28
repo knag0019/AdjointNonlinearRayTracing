@@ -1,22 +1,26 @@
 {
-  "name": "Adjoint Nonlinear Ray Tracing (CPU)",
+  "name": "AdjointNonlinearRayTracing",
   "build": {
     "dockerfile": "Dockerfile",
     "context": ".."
+  },
+  // GPU を必ず使う
+  "runArgs": ["--gpus=all", "--shm-size=1g"],
+  "remoteUser": "vscode",
+
+  // ワークスペース初回セットアップ（サブモジュール取得→ビルド→setpath.sh を永続化）
+  "postCreateCommand": "git submodule update --init --recursive && mkdir -p build && cd build && cmake .. -DENOKI_CUDA=1 -DENOKI_AUTODIFF=1 -DENOKI_PYTHON=1 && cmake --build . -j $(nproc) && cd .. && echo 'source $(pwd)/setpath.sh' >> ~/.bashrc",
+
+  "settings": {
+    "terminal.integrated.defaultProfile.linux": "bash"
   },
   "customizations": {
     "vscode": {
       "extensions": [
         "ms-python.python",
-        "ms-python.pylint", 
-        "ms-vscode.cpptools",
+        "ms-python.vscode-pylance",
         "ms-vscode.cmake-tools"
       ]
     }
-  },
-  "workspaceFolder": "/workspace",
-  "postCreateCommand": "source setpath.sh && echo 'Environment ready! Run: python core/luneburg_opt.py to test'",
-  "containerEnv": {
-    "PYTHONPATH": "/workspace/build:${PYTHONPATH}"
   }
 }
