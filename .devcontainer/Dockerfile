@@ -18,7 +18,7 @@ RUN update-alternatives --install /usr/bin/python python /usr/bin/python3.8 1 &&
     update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.8 1 && \
     python -m pip install --upgrade pip
 
-# --- Python packages (install as root) ---
+# --- Python packages (root install) ---
 RUN pip install --no-cache-dir numpy matplotlib tqdm pillow \
  && pip install --no-cache-dir --extra-index-url https://download.pytorch.org/whl/cu118 \
         torch==2.4.1+cu118 torchvision==0.19.1+cu118 torchaudio==2.4.1+cu118
@@ -36,5 +36,5 @@ USER ${USER}
 WORKDIR /workspaces
 SHELL ["/bin/bash", "-lc"]
 
-# コンテナが即終了しないように
+# コンテナが終了しないように
 CMD ["bash", "-lc", "sleep infinity"]
