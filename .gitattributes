@@ -1,0 +1,12 @@
+# デフォルトでテキストを正規化して LF に
+* text=auto eol=lf
+
+# 念押し（スクリプト類）
+*.sh      text eol=lf
+*.bash    text eol=lf
+*.py      text eol=lf
+*.json    text eol=lf
+*.yml     text eol=lf
+*.yaml    text eol=lf
+*.cmake   text eol=lf
+CMakeLists.txt text eol=lf
