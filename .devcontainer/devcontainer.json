@@ -8,8 +8,7 @@
   "remoteUser": "vscode",
 
   "containerEnv": {
-    "CUDACXX": "/usr/local/cuda/bin/nvcc",
-    "PATH": "/usr/local/cuda/bin:/usr/local/cuda/nsight-compute-2024.1.0/bin:${PATH}"
+    "CUDACXX": "/usr/local/cuda/bin/nvcc"
   },
 
   "postCreateCommand": "repo_root=$(pwd); git config --global --add safe.directory \"$repo_root\" && git submodule update --init --recursive && mkdir -p build && cd build && cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release -DENOKI_CUDA=1 -DENOKI_AUTODIFF=1 -DENOKI_PYTHON=1 -DPYTHON_EXECUTABLE:FILEPATH=$(which python) -DCMAKE_CUDA_COMPILER=$CUDACXX && cmake --build . -j $(nproc) && cd .. && echo 'source $(pwd)/setpath.sh' >> ~/.bashrc",
